@@ -1,32 +1,40 @@
 # TiRGN
 
-This is the code of TiRGN.
+This is a reproduction of TiRGN with more recent libraries (torch 2.4.0 rather than 1.6.0) so that it can run on more recent GPUs.
 
 
-### Installation
+# Installation
+
+We use `uv` for dependency management, so you can use `uv sync`. Alternatively:
+
+```sh
+python -m venv .venv
+source .venv/bin/activate
+pip install torch==2.4.0 torchvision==0.19.0 --index-url https://download.pytorch.org/whl/cu124
+pip install dgl -f https://data.dgl.ai/wheels/torch-2.4/cu124/repo.html
+pip install tqdm pandas rdflib
 ```
-conda create -n tirgn python=3.7
-
-conda activate tirgn
-
-pip install -r requirement.txt
-```
 
 
+# How to run
 
-## How to run
-
-#### Process data
+## Process data
 
 For all the datasets, the following command can be used to get the history of their entities and relations.
-```
+
+```sh
 cd src
 python get_history.py --dataset ICEWS14
 ```
 
+## YAGO 4.5 data
+
+YAGO 4.5 data are too large to be included there. It's possible to get them with the `get_yago4.5.sh` script.
+
+*note: it is currently impossible (or at least etremely difficult) to use TiRGN with the YAGO4.5 data, as the history matrices are too large given the large number of entities in YAGO4.5.*
 
 
-#### Train models
+## Train models
 
 Then the following commands can be used to train TiRGN.
 
@@ -38,17 +46,17 @@ python main.py -d ICEWS14 --history-rate 0.3 --train-history-len 9 --test-histor
 
 
 
-#### Evaluate models
+## Evaluate models
 
 The following commands can be used to evaluate TiRGN (add `--test` only).
 
-###### Test with ground truth history:
+### Test with ground truth history:
 
 ```
 python main.py -d ICEWS14 --history-rate 0.3 --train-history-len 9 --test-history-len 9 --dilate-len 1 --lr 0.001 --n-layers 2 --evaluate-every 1 --n-hidden 200 --self-loop --decoder timeconvtranse --encoder convgcn --layer-norm --weight 0.5  --entity-prediction --relation-prediction --add-static-graph --angle 14 --discount 1 --task-weight 0.7 --gpu 0 --save checkpoint --test 
 ```
 
-###### Test without ground truth history:
+### Test without ground truth history:
 
 ```
 python main.py -d ICEWS14 --history-rate 0.3 --train-history-len 9 --test-history-len 9 --dilate-len 1 --lr 0.001 --n-layers 2 --evaluate-every 1 --n-hidden 200 --self-loop --decoder timeconvtranse --encoder convgcn --layer-norm --weight 0.5  --entity-prediction --relation-prediction --add-static-graph --angle 14 --discount 1 --task-weight 0.7 --gpu 0 --save checkpoint --test --multi-step --topk 0
@@ -56,47 +64,47 @@ python main.py -d ICEWS14 --history-rate 0.3 --train-history-len 9 --test-histor
 
 
 
-#### Detailed hyperparameters
+### Detailed hyperparameters
 
 The following commands and trained models ([google drive](https://drive.google.com/drive/folders/1-nQXpdofg-SXSsBOUMv6DS4XtDXGGl8X?usp=sharing)) can be used to get the entity prediction results reported in the paper (remove `--test` to train new models).
 
-###### ICEWS14
+##### ICEWS14
 
 ~~~
 python main.py -d ICEWS14 --history-rate 0.3 --train-history-len 9 --test-history-len 9 --dilate-len 1 --lr 0.001 --n-layers 2 --evaluate-every 1 --n-hidden 200 --self-loop --decoder timeconvtranse --encoder convgcn --layer-norm --weight 0.5  --entity-prediction --relation-prediction --add-static-graph --angle 14 --discount 1 --task-weight 0.7 --gpu 0 --save checkpoint --test 
 ~~~
 
-###### ICEWS14s
+#### ICEWS14s
 
 ~~~
 python main.py -d ICEWS14s --history-rate 0.3 --train-history-len 9 --test-history-len 9 --dilate-len 1 --lr 0.001 --n-layers 2 --evaluate-every 1 --n-hidden 200 --self-loop --decoder timeconvtranse --encoder convgcn --layer-norm --weight 0.5  --entity-prediction --relation-prediction --add-static-graph --angle 14 --discount 1 --task-weight 0.7 --gpu 0 --save checkpoint --test
 ~~~
 
-###### ICEWS18
+#### ICEWS18
 
 ~~~
 python main.py -d ICEWS18 --history-rate 0.3 --train-history-len 10 --test-history-len 10 --dilate-len 1 --lr 0.001 --n-layers 2 --evaluate-every 1 --n-hidden 200 --self-loop --decoder timeconvtranse --encoder convgcn --layer-norm --weight 0.5  --entity-prediction --relation-prediction --add-static-graph --angle 10 --discount 1 --task-weight 0.7 --gpu 0 --save checkpoint --test
 ~~~
 
-###### ICEWS05-15
+#### ICEWS05-15
 
 ~~~
 python main.py -d ICEWS05-15 --history-rate 0.3 --train-history-len 15 --test-history-len 15 --dilate-len 1 --lr 0.001 --n-layers 2 --evaluate-every 1 --n-hidden 200 --self-loop --decoder timeconvtranse --encoder convgcn --layer-norm --weight 0.5  --entity-prediction --relation-prediction --add-static-graph --angle 10 --discount 1 --task-weight 0.7 --gpu 0 --save checkpoint --test
 ~~~
 
-###### WIKI
+#### WIKI
 
 ~~~
 python main.py -d WIKI --history-rate 0.3 --train-history-len 2 --test-history-len 2 --dilate-len 1 --lr 0.001 --n-layers 2 --evaluate-every 1 --n-hidden 200 --self-loop --decoder timeconvtranse --encoder convgcn --layer-norm --weight 0.5  --entity-prediction --relation-prediction --angle 10 --discount 1 --task-weight 0.7 --gpu 0 --save checkpoint --test
 ~~~
 
-###### YAGO
+#### YAGO
 
 ~~~
 python main.py -d YAGO --history-rate 0.3 --train-history-len 1 --test-history-len 1 --dilate-len 1 --lr 0.001 --n-layers 1 --evaluate-every 1 --n-hidden 200 --self-loop --decoder timeconvtranse --encoder convgcn --layer-norm --weight 0.5  --entity-prediction --relation-prediction --angle 10 --discount 1 --task-weight 0.7 --gpu 0 --save checkpoint --test
 ~~~
 
-###### GDELT
+#### GDELT
 
 ~~~
 python main.py -d GDELT --history-rate 0.3 --train-history-len 7 --test-history-len 7 --dilate-len 1 --lr 0.001 --n-layers 2 --evaluate-every 1 --n-hidden 200 --self-loop --decoder timeconvtranse --encoder convgcn --layer-norm --weight 0.5  --entity-prediction --relation-prediction --angle 10 --discount 1 --task-weight 0.7 --gpu 0 --save checkpoint --test
@@ -104,7 +112,7 @@ python main.py -d GDELT --history-rate 0.3 --train-history-len 7 --test-history-
 
 
 
-### Cite
+# Cite
 
 Please cite as:
 ~~~
