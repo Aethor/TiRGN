@@ -3,11 +3,11 @@ import json, os, shutil
 
 def download_yago45():
     os.system(
-        "wget https://cloud.klmp200.net/index.php/s/Wi4akFDDDS2EXeB/download -O YAGO4.5.tar.gz"
+        "wget https://cloud.klmp200.net/index.php/s/KyxdPbWtBdTJwjF/download -O YAGO4.5.tar.xz"
     )
-    os.system("tar -xvf YAGO4.5.tar.gz")
-    os.rename("yago4.5-small", "../data/YAGO4.5")
-    os.remove("YAGO4.5.tar.gz")
+    os.system("tar -xvf YAGO4.5.tar.xz")
+    os.rename("yago4.5", "../data/YAGO4.5")
+    os.remove("YAGO4.5.tar.xz")
 
 
 def convert_yago45_to_tirgn_format():
@@ -22,8 +22,9 @@ def convert_yago45_to_tirgn_format():
         ts2id = json.load(f)
 
     train_path = "../data/YAGO4.5/train.txt"
+    valid_path = "../data/YAGO4.5/valid.txt"
     test_path = "../data/YAGO4.5/test.txt"
-    for path in [train_path, test_path]:
+    for path in [train_path, valid_path, test_path]:
         new_lines = []
         with open(path) as f:
             for line in f:
