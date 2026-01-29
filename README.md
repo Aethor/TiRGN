@@ -1,6 +1,6 @@
 # TiRGN
 
-This is a reproduction of TiRGN with more recent libraries (torch 2.4.0 rather than 1.6.0) so that it can run on more recent GPUs.
+This is an update of TiRGN with more recent libraries (torch 2.4.0 rather than 1.6.0) so that it can run on more recent GPUs.
 
 
 # Installation
